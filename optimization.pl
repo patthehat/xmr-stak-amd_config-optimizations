@@ -60,26 +60,25 @@ print "Intensity|Workers|Hashrate|\n";
 #Loop every intensity for every worker setting, overwriting config.txt
 for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 	open(CONFIG, "<", "config.txt") or die("Could not open config.txt");
-	open(CONFOUT, ">", "config.txt.new") or die("Could not write new file.");
-	
-	
-	# print the lines before the change
-	while( <CONFIG> ){
-		print CONFOUT $_;
-		last if $. == 15; # line number before change
-		}
-	#change workersize 
-	my $line = <CONFIG>;
-	$line =~ s/"worksize":(\d+),/"worksize":$workers,/g;
-	print CONFOUT $line;
-	#print rest of lines
-	while( <CONFIG> ){
-		print CONFOUT $_;
-		}
-	
+		open(CONFOUT, ">", "config.txt.new") or die("Could not write new file.");
+		# print the lines before the change
+		while( <CONFIG> ){
+			print CONFOUT $_;
+			last if $. == 15; # line number before change
+			}
+		
+		my $line = <CONFIG>;
+		$line =~ s/"worksize":(\d+),/"worksize":$workers,/g;
+		print CONFOUT $line;
+		
+		while( <CONFIG> ){
+			print CONFOUT $_;
+			}
+		
+		close(CONFIG);
+		close(CONFOUT);
 
-	close(CONFIG);
-	close(CONFOUT);
+		move "config.txt.new", "config.txt";
 	move "config.txt.new", "config.txt";
 	
 	
