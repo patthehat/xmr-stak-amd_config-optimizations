@@ -11,6 +11,7 @@ my $workers_max;
 my $workers_steps;
 
 my $intensity;
+my $intensity_min;
 my $intensity_max;
 my $intensity_steps;
 
@@ -31,6 +32,7 @@ chomp $workers_steps;
 print "Enter Min Intensity:";
 $intensity = <STDIN>;
 chomp $intensity;
+$intensity_min = $intensity;
 print "Enter Max Intensity:";
 $intensity_max = <STDIN>;
 chomp $intensity_max;
@@ -81,7 +83,7 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 		move "config.txt.new", "config.txt";
 	move "config.txt.new", "config.txt";
 	
-	
+	$intensity = $intensity_min;
 	for ($intensity; $intensity <= $intensity_max; $intensity = $intensity + $intensity_steps){
 		open(CONFIG, "<", "config.txt") or die("Could not open config.txt");
 		open(CONFOUT, ">", "config.txt.new") or die("Could not write new file.");
@@ -132,7 +134,11 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 			close(RESULT);
 			}else{
 				print "No Logfile found, restarting miner with same settings.";
-				$intensity=$intensity-$intensity_steps;
+				if ($intensity == $intensity_min){
+					$workers = $workers-$workers_steps;
+				}else{
+					$intensity=$intensity-$intensity_steps;
+				}
 			}
 	}
 }
