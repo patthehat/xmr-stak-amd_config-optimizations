@@ -1,5 +1,5 @@
-# xmr-stat-amd_optimizations
-Perl Script for automatic testing of different intensity and workersize numbers for xmr-stat-amd miner. It applies settings to config.txt, starts the miner, waits 40 sec, kills it, reads the log.txt, deletes it afterwards and saves last 10s hashrate in result.txt
+# xmr-stak-amd_optimizations
+Perl Script for automatic testing of different intensity and workersize numbers for xmr-stak-amd miner. It applies settings to config.txt, starts the miner, waits 40 sec, **kills all programs with the name xmr-stak-amd.exe**, reads the log.txt, deletes it afterwards and saves last 10s hashrate in result.txt
 
 Due to System function calling Windows functions currently only works on Windows, has to be edited for Linux. 
 
