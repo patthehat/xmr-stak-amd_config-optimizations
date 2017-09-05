@@ -54,7 +54,7 @@ close(RESULT);
 
 #Write header
 open(RESULT, ">", "results.txt") or die("Could not write to results.");
-print RESULT "Intensity|Workers|Hashrate|\n";
+print RESULT "Intensity\tWorkers\tHashrate|\n";
 close(RESULT);
 
 print "Intensity|Workers|Hashrate|\n";
@@ -106,7 +106,7 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 
 		move "config.txt.new", "config.txt";
 		#start miner in new window
-		system  "start /ABOVENORMAL xmr-stak-amd.exe";
+		system  "start /Min /ABOVENORMAL xmr-stak-amd.exe";
 		
 		sleep 40; 
 		
@@ -116,6 +116,7 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 		sleep 1;
 		#read hashrate in log
 		$logread = 1;
+		$log = "NA";
 		open(LOG, "<", "log.txt") or $logread = 0;
 		if ($logread == 1){
 			while(<LOG>){
@@ -130,15 +131,15 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 			print $intensity."\t | ".$workers."\t | ".$log."   |\n";
 			
 			open(RESULT, ">>", "results.txt") or die("Could not write to results.");
-			print RESULT $intensity."\t | ".$workers."\t | ".$log."   |\n";
+			print RESULT $intensity."\t".$workers."\t".$log."\n";
 			close(RESULT);
+		}else{
+			print "No Logfile found, restarting miner with same settings.";
+			if ($intensity == $intensity_min){
+				$workers = $workers-$workers_steps;
 			}else{
-				print "No Logfile found, restarting miner with same settings.";
-				if ($intensity == $intensity_min){
-					$workers = $workers-$workers_steps;
-				}else{
-					$intensity=$intensity-$intensity_steps;
-				}
+				$intensity=$intensity-$intensity_steps;
+			}
 			}
 	}
 }
