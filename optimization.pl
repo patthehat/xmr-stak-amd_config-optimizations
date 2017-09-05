@@ -15,6 +15,7 @@ my $intensity_max;
 my $intensity_steps;
 
 my $log;
+my $logread;
 
 #Ask about settings if they were not defined
 print "Enter Min Workersize:";
@@ -39,7 +40,7 @@ chomp $intensity_steps;
 
 
 #Estimate time to finish
-print "The program will run about ".(((($workers_max-$workers)/$workers_steps)+1)*((($intensity_max-$intensity)/$intensity_steps)+1)*0.67)." min. Continue? (any key)\n";
+print "The program will run about ".(((($workers_max-$workers)/$workers_steps)+1)*((($intensity_max-$intensity)/$intensity_steps)+1)*0.75)." min. Continue? (any key)\n";
 <STDIN>;
 open(RESULT, "<", "results.txt") or die("Could not write to results.");
 	if(<RESULT>){
@@ -113,19 +114,26 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 		qx{"taskkill /F /IM xmr-stak-amd.exe"};
 		sleep 1;
 		#read hashrate in log
-		open(LOG, "<", "log.txt") or die("Could not open log.txt");
-		while(<LOG>){
-			$_ = m/\|.+\|\s(\d+)\.\d.+\|.+\|/g;
-			$log=$1;
-		}
-		close(LOG);
-		
-		system "del /f log.txt";
-		#write results
-		print $intensity."\t | ".$workers."\t | ".$log."   |\n";
-		
-		open(RESULT, ">>", "results.txt") or die("Could not write to results.");
-		print RESULT $intensity."\t | ".$workers."\t | ".$log."   |\n";
-		close(RESULT);
+		$logread = 1;
+		open(LOG, "<", "log.txt") or $logread = 0;
+		if ($logread == 1){
+			while(<LOG>){
+				$_ = m/\|.+\|\s(\d+)\.\d.+\|.+\|/g;
+				$log=$1;
+			}
+			close(LOG);
+			sleep 1;
+			system "del /f log.txt";
+			sleep 1;
+			#write results
+			print $intensity."\t | ".$workers."\t | ".$log."   |\n";
+			
+			open(RESULT, ">>", "results.txt") or die("Could not write to results.");
+			print RESULT $intensity."\t | ".$workers."\t | ".$log."   |\n";
+			close(RESULT);
+			}else{
+				print "No Logfile found, restarting miner with same settings.";
+				$intensity=$intensity-$intensity_steps;
+			}
 	}
 }
