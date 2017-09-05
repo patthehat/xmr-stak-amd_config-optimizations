@@ -17,6 +17,7 @@ my $intensity_steps;
 
 my $log;
 my $logread;
+my $overwrite = 0;
 
 #Ask about settings if they were not defined
 print "Enter Min Workersize:";
@@ -46,16 +47,34 @@ print "The program will run about ".(((($workers_max-$workers)/$workers_steps)+1
 <STDIN>;
 open(RESULT, "<", "results.txt") or die("Could not write to results.");
 	if(<RESULT>){
-	print "result.txt not empty, overwrite? (y/n)\n";
-		if (<STDIN> eq "y\n"){print "Overwritten.\n"}
-		else{die("Did not overwrite results.txt.")}
+	print "result.txt not empty, overwrite (y) or append (n)?)\n";
+		if (<STDIN> eq "y\n"){
+		print "Overwritten.\n";
+		$overwrite = 1;
+		}
+		else{
+		print "Appending results.\n";
+		}
 	}
 close(RESULT);
 
 #Write header
-open(RESULT, ">", "results.txt") or die("Could not write to results.");
-print RESULT "Intensity\tWorkers\tHashrate|\n";
+if ($overwrite == 1){
+	open(RESULT, ">", "results.txt") or die("Could not write to results.");
+}else{
+	open(RESULT, ">>", "results.txt") or die("Could not write to results.");
+}
+print RESULT (30*"_")."\nNew run started at ".localtime."\n";
+print RESULT "Settings: \n";
+print RESULT "Workers from ".$workers." to ".$workers_max." in ".$workers_steps." increments.\n";
+print RESULT "Intensity from ".$intensity_min." to ".$intensity_max." in ".$intensity_steps." increments.\n\n";
+print RESULT "Intensity\tWorkers\tHashrate\n";
 close(RESULT);
+
+print (30*"_")."\nNew run started at ".localtime."\n";
+print "Settings: \n";
+print "Workers from ".$workers." to ".$workers_max." in ".$workers_steps." increments.\n";
+print "Intensity from ".$intensity_min." to ".$intensity_max." in ".$intensity_steps." increments.\n\n";
 
 print "Intensity|Workers|Hashrate|\n";
 
@@ -121,7 +140,9 @@ for ($workers; $workers <= $workers_max; $workers = $workers + $workers_steps){
 		if ($logread == 1){
 			while(<LOG>){
 				$_ = m/\|.+\|\s(\d+)\.\d.+\|.+\|/g;
-				$log=$1;
+				if ($1 != $intensity){
+					$log=$1;
+				}
 			}
 			close(LOG);
 			sleep 1;
