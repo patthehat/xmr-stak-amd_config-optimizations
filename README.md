@@ -3,3 +3,5 @@ Perl Script for automatic testing of different intensity and workersize numbers 
 Due to System function calling Windows functions currently only works on Windows, has to be edited for Linux. 
 
 Results are saved in results.txt
+
+Needs Perl installed (i.e. Strawberry Perl for Windows)
