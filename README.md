@@ -5,7 +5,7 @@ Due to System function calling Windows functions currently only works on Windows
 
 Results are saved in results.txt
 
-Needs Perl installed (i.e. Strawberry Perl for Windows)
+Needs Perl installed (i.e. Strawberry Perl for Windows) and the Win32 Module (install via CPAN, type "install Module::Win32")
 
 Only the optimizations.pl script is needed. It works ONLY on a preconfigured config file with **verbosity level 4** and **hashrate report set to 30s or less** (I have it set to 10s to filter out first seconds). 
 
